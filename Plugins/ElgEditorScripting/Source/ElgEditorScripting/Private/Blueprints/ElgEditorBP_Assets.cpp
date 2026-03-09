@@ -254,7 +254,15 @@ TMap<UObject*, FS_ElgAssetMetaData> UElgEditorBP_Assets::GetAssetObjectsMetaData
 		FS_ElgAssetMetaData meta;
 		meta.Object = object;
 
-		TMap<FName, FString>* metaData = UMetaData::GetMapForObject(object);		
+
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION <= 5
+		// UE 5.5 and older
+		TMap<FName, FString>* metaData = UMetaData::GetMapForObject(object);
+#else
+		// UE 5.6 and newer
+		TMap<FName, FString>* metaData = object->GetPackage()->GetMetaData().GetMapForObject(object);
+#endif
+
 		if (metaData) {
 			TArray<FName> keys;
 			metaData->GetKeys(keys);
@@ -281,7 +289,14 @@ TMap<UObject*, FS_ElgAssetMetaData> UElgEditorBP_Assets::GetAssetObjectsWithMeta
 	for (UObject* object : AssetObjects) {
 		if (object == nullptr) continue;
 
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION <= 5
+		// UE 5.5 and older
 		TMap<FName, FString>* metaData = UMetaData::GetMapForObject(object);
+#else
+		// UE 5.6 and newer
+		TMap<FName, FString>* metaData = object->GetPackage()->GetMetaData().GetMapForObject(object);
+#endif
+		
 		if (metaData == nullptr) continue;
 
 		if (metaData->Find(MetaDataKey)) {
@@ -309,7 +324,7 @@ FString UElgEditorBP_Assets::GetMetaDataKeyBranch(UObject* AssetObject, FName Ke
 #if WITH_EDITORONLY_DATA
 	if (AssetObject)
 	{
-		value = AssetObject->GetOutermost()->GetMetaData()->GetValue(AssetObject, Key);		
+		value = AssetObject->GetOutermost()->GetMetaData().GetValue(AssetObject, Key);
 		if (!value.IsEmpty()) {
 			Branches = EBPEditorOutputValidBranch::Valid;
 		}
@@ -329,7 +344,14 @@ void UElgEditorBP_Assets::GetAssetObjectMetaData(UObject* AssetObject, bool& Suc
 
 	MetaData.Object = AssetObject;
 
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION <= 5
+	// UE 5.5 and older
 	TMap<FName, FString>* metaData = UMetaData::GetMapForObject(AssetObject);
+#else
+	// UE 5.6 and newer
+	TMap<FName, FString>* metaData = AssetObject->GetPackage()->GetMetaData().GetMapForObject(AssetObject);
+#endif
+	
 	if (metaData) {
 		TArray<FName> keys;
 		metaData->GetKeys(keys);
