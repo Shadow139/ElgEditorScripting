@@ -39,10 +39,9 @@ UBlueprint* UElgEditorBP_UBlueprint::GetBlueprintFromAssetData(const FAssetData&
 
 	Branches = EBPEditorOutputValidBranch::Valid;
 	return blueprint;
-
-#endif
-
+#else
 	return nullptr;
+#endif
 }
 
 
@@ -60,10 +59,9 @@ UBlueprint* UElgEditorBP_UBlueprint::GetBlueprintFromObject(UObject* Object, EBP
 
 	Branches = EBPEditorOutputValidBranch::Valid;
 	return blueprint;
-
-#endif
-
+#else
 	return nullptr;
+#endif
 }
 
 
